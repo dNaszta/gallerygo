@@ -22,6 +22,17 @@ type sizeConfig struct {
 	Height uint16
 }
 
+func (c *configs) toJSON() []byte {
+	out, err := json.Marshal(c)
+	if err != nil {
+		panic (err)
+	}
+	return out
+}
+
+func (c *configs) toString() string {
+	return string(c.toJSON())
+}
 
 func Load()  {
 	file, err := ioutil.ReadFile(ConfigFileName)

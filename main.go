@@ -14,7 +14,7 @@ func HomeHandler(w http.ResponseWriter, _ *http.Request) {
 
 func main() {
 	Load()
-	fmt.Println("Configs:", Configs)
+	fmt.Println("Configs:", Configs.toString())
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
 	http.ListenAndServe(Configs.Port, r)
