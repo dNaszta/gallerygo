@@ -1,5 +1,5 @@
 {
-  "Port" : null,
+  "Port" : ":8080",
   "Sizes": [
     {
       "Width": 640,

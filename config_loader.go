@@ -8,7 +8,7 @@ import (
 )
 
 const ConfigFileName = "./config.json"
-const DefaultPort = "8080"
+const DefaultPort = ":8080"
 
 var Configs configs
 
