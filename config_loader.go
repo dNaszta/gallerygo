@@ -8,10 +8,12 @@ import (
 )
 
 const ConfigFileName = "./config.json"
+const DefaultPort = "8080"
 
-var Sizes sizesConfigs
+var Configs configs
 
-type sizesConfigs struct {
+type configs struct {
+	Port string
 	Sizes []sizeConfig
 }
 
@@ -20,12 +22,6 @@ type sizeConfig struct {
 	Height uint16
 }
 
-func NewSizeConfig(width, height uint16) *sizeConfig {
-	return &sizeConfig{
-		Width: width,
-		Height: height,
-	}
-}
 
 func Load()  {
 	file, err := ioutil.ReadFile(ConfigFileName)
@@ -33,10 +29,14 @@ func Load()  {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	json.Unmarshal(file, &Sizes)
+	json.Unmarshal(file, &Configs)
 
-	if len(Sizes.Sizes) < 1 {
+	if len(Configs.Sizes) < 1 {
 		fmt.Printf("Error: No image sizes config")
 		os.Exit(1)
+	}
+
+	if Configs.Port == "" {
+		Configs.Port = DefaultPort
 	}
 }

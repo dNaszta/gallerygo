@@ -4,5 +4,5 @@ import "fmt"
 
 func main() {
 	Load()
-	fmt.Println("Loaded sizes:", Sizes)
+	fmt.Println("Configs:", Configs)
 }
