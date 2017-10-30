@@ -3,3 +3,7 @@ import:
 - package: gopkg.in/mgo.v2
 - package: gopkg.in/gorilla/mux.v1
   version: ^1.5.0
+- package: github.com/nfnt/resize
+  vcs: git
+  repo: https://github.com/nfnt/resize.git
+
