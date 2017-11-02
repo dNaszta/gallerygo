@@ -12,9 +12,13 @@ func HomeHandler(w http.ResponseWriter, _ *http.Request) {
 	fmt.Fprint(w, "{\"page\" : \"Home\"}")
 }
 
-func main() {
+func init() {
 	Load()
 	fmt.Println("Configs:", Configs.toString())
+	RunMongo()
+}
+
+func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
 	http.ListenAndServe(Configs.Port, r)
