@@ -1,13 +1,18 @@
 {
-  "Port" : ":8080",
-  "Sizes": [
-    {
-      "Width": 640,
-      "Height": 480
+    "Port" : ":8080",
+    "MongoDB" : {
+        "ConnectionString" : "localhost",
+        "Database" : "test",
+        "GalleryCollection" : "gallery"
     },
-    {
-      "Width": 1024,
-      "Height": 768
-    }
-  ]
+    "Sizes": [
+        {
+            "Width": 640,
+            "Height": 480
+        },
+        {
+            "Width": 1024,
+            "Height": 768
+        }
+    ]
 }

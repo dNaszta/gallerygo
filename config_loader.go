@@ -15,6 +15,13 @@ var Configs configs
 type configs struct {
 	Port string
 	Sizes []sizeConfig
+	MongoDB mongoSettings
+}
+
+type mongoSettings struct {
+	ConnectionString string
+	Database string
+	GalleryCollection string
 }
 
 type sizeConfig struct {

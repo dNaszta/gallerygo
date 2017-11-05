@@ -7,25 +7,25 @@ import (
 )
 
 func RunMongo() {
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(Configs.MongoDB.ConnectionString)
 	if err != nil {
 		panic(err)
 	}
 	defer session.Close()
 
 	session.SetMode(mgo.Monotonic, true)
-	c := session.DB("test").C("gallery")
-	err = c.Insert(&Gallery{"test_1"},&Gallery{"test_2"})
+	c := session.DB(Configs.MongoDB.Database).C(Configs.MongoDB.GalleryCollection)
+	err = c.Insert(TestGallery)
 
 	if err != nil {
 		panic(err)
 	}
 
 	result := Gallery{}
-	err = c.Find(bson.M{"gallery_id": "test_1"}).One(&result)
+	err = c.Find(bson.M{"gallery_id": "test_first"}).One(&result)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Gallery:", result)
+	fmt.Println("Gallery:", result.toString())
 }
