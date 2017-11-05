@@ -1,6 +1,10 @@
 package main
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+)
 
 type Gallery struct {
 	GalleryId string	`bson:"gallery_id" json:"gallery_id"`
@@ -29,6 +33,40 @@ func (g *Gallery) toJSON() []byte {
 
 func (g *Gallery) toString() string {
 	return string(g.toJSON())
+}
+
+func (g *Gallery) Insert() {
+	session, err := mgo.Dial(Configs.MongoDB.ConnectionString)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	session.SetMode(mgo.Monotonic, true)
+	collection := session.DB(Configs.MongoDB.Database).C(Configs.MongoDB.GalleryCollection)
+	err = collection.Insert(g)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func FindGalleryByGalleryId(gallery_id string) *Gallery {
+	session, err := mgo.Dial(Configs.MongoDB.ConnectionString)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+	collection := session.DB(Configs.MongoDB.Database).C(Configs.MongoDB.GalleryCollection)
+
+	result := Gallery{}
+	err = collection.Find(bson.M{"gallery_id": "test_first"}).One(&result)
+	if err != nil {
+		panic(err)
+	}
+
+	return &result
 }
 
 var TestGallery = Gallery {
