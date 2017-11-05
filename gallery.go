@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -36,38 +35,37 @@ func (g *Gallery) toString() string {
 }
 
 func (g *Gallery) Insert() {
-	session, err := mgo.Dial(Configs.MongoDB.ConnectionString)
-	if err != nil {
-		panic(err)
-	}
+	session := GetSession()
 	defer session.Close()
-
-	session.SetMode(mgo.Monotonic, true)
-	collection := session.DB(Configs.MongoDB.Database).C(Configs.MongoDB.GalleryCollection)
-	err = collection.Insert(g)
+	collection := GetGalleryCollection(session)
+	err := collection.Insert(g)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func FindGalleryByGalleryId(gallery_id string) *Gallery {
-	session, err := mgo.Dial(Configs.MongoDB.ConnectionString)
-	if err != nil {
-		panic(err)
-	}
+func FindGalleryByGalleryId(galleryId string) *Gallery {
+	session := GetSession()
 	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-	collection := session.DB(Configs.MongoDB.Database).C(Configs.MongoDB.GalleryCollection)
+	collection := GetGalleryCollection(session)
 
 	result := Gallery{}
-	err = collection.Find(bson.M{"gallery_id": "test_first"}).One(&result)
+	err := collection.Find(bson.M{"gallery_id": galleryId}).One(&result)
 	if err != nil {
 		panic(err)
 	}
 
 	return &result
 }
+
+/*
+func FindGalleryIds() {
+	session := GetSession()
+	defer session.Close()
+	collection := getGalleryCollection(session)
+}
+*/
 
 var TestGallery = Gallery {
 	GalleryId: "test_first",
