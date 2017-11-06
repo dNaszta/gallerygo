@@ -11,15 +11,7 @@ import (
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
 	results := FindGalleryIds()
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	enc := json.NewEncoder(w)
-	enc.SetIndent("", "    ")
-	err := enc.Encode(results)
-	if err != nil {
-		panic(err)
-	}
+	jsonEndpoint(w, results)
 }
 
 func GalleryHandler(w http.ResponseWriter, request *http.Request) {
@@ -27,6 +19,10 @@ func GalleryHandler(w http.ResponseWriter, request *http.Request) {
 	galleryId := vars["galleryId"]
 	result := FindGalleryByGalleryId(galleryId)
 
+	jsonEndpoint(w, result)
+}
+
+func jsonEndpoint(w http.ResponseWriter, result interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
