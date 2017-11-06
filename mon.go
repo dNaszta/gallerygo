@@ -25,7 +25,8 @@ func setGalleryKeyIndex() {
 	index := mgo.Index{
 		Key: []string{GalleryKey},
 		Unique: true,
-		Name:GalleryKey,
+		Name: GalleryKey,
+		Background: true,
 	}
 	err := GalleryCollection.EnsureIndex(index)
 	if err != nil {
