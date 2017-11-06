@@ -5,6 +5,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+type GalleryId struct {
+	GalleryId string	`bson:"gallery_id" json:"gallery_id"`
+}
+
 type Gallery struct {
 	GalleryId string	`bson:"gallery_id" json:"gallery_id"`
 	Images []Image		`json:"images"`
@@ -53,13 +57,15 @@ func FindGalleryByGalleryId(galleryId string) *Gallery {
 	return &gallery
 }
 
-/*
-func FindGalleryIds() {
-	session := GetSession()
-	defer session.Close()
-	collection := getGalleryCollection(session)
+func FindGalleryIds() *[]GalleryId {
+	var results []GalleryId
+	err := GalleryCollection.Find(bson.M{}).Select(bson.M{"_id" : 0, "gallery_id" : 1}).All(&results)
+	if err != nil {
+		panic(err)
+	}
+
+	return &results
 }
-*/
 
 var TestGallery = Gallery {
 	GalleryId: "test_first",

@@ -5,12 +5,21 @@ import (
 	"gopkg.in/gorilla/mux.v1"
 	"net/http"
 	"gopkg.in/mgo.v2"
+	"encoding/json"
 )
 
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
+	results := FindGalleryIds()
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	fmt.Fprint(w, "{\"page\" : \"Home\"}")
+
+	enc := json.NewEncoder(w)
+	enc.SetIndent("", "    ")
+	err := enc.Encode(results)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func init() {
@@ -25,7 +34,7 @@ func main() {
 	defer session.Close()
 	GalleryCollection = GetGalleryCollection(session)
 	CheckAndCreateGalleryIndexes()
-	//RunMongo()
+	// RunMongo()
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
