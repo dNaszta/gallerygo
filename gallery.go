@@ -24,6 +24,7 @@ type ImageProperty struct {
 
 func (g *Gallery) toJSON() []byte {
 	out, err := json.Marshal(g)
+
 	if err != nil {
 		panic (err)
 	}
@@ -35,10 +36,7 @@ func (g *Gallery) toString() string {
 }
 
 func (g *Gallery) Insert() {
-	session := GetSession()
-	defer session.Close()
-	collection := GetGalleryCollection(session)
-	err := collection.Insert(g)
+	err := GalleryCollection.Insert(g)
 
 	if err != nil {
 		panic(err)
@@ -46,17 +44,13 @@ func (g *Gallery) Insert() {
 }
 
 func FindGalleryByGalleryId(galleryId string) *Gallery {
-	session := GetSession()
-	defer session.Close()
-	collection := GetGalleryCollection(session)
-
-	result := Gallery{}
-	err := collection.Find(bson.M{"gallery_id": galleryId}).One(&result)
+	gallery := Gallery{}
+	err := GalleryCollection.Find(bson.M{GalleryKey : galleryId}).One(&gallery)
 	if err != nil {
 		panic(err)
 	}
 
-	return &result
+	return &gallery
 }
 
 /*

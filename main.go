@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/gorilla/mux.v1"
 	"net/http"
+	"gopkg.in/mgo.v2"
 )
 
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
@@ -15,10 +16,17 @@ func HomeHandler(w http.ResponseWriter, _ *http.Request) {
 func init() {
 	Load()
 	fmt.Println("Configs:", Configs.toString())
-	RunMongo()
 }
 
+var GalleryCollection *mgo.Collection
+
 func main() {
+	session := GetSession()
+	defer session.Close()
+	GalleryCollection = GetGalleryCollection(session)
+	CheckAndCreateGalleryIndexes()
+	//RunMongo()
+
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
 	http.ListenAndServe(Configs.Port, r)
