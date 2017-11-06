@@ -22,6 +22,22 @@ func HomeHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
+func GalleryHandler(w http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	galleryId := vars["galleryId"]
+	result := FindGalleryByGalleryId(galleryId)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	enc := json.NewEncoder(w)
+	enc.SetIndent("", "    ")
+	err := enc.Encode(result)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func init() {
 	Load()
 	fmt.Println("Configs:", Configs.toString())
@@ -37,6 +53,7 @@ func main() {
 	// RunMongo()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", HomeHandler)
+	r.HandleFunc("/", HomeHandler).Methods("GET")
+	r.HandleFunc("/gallery/{galleryId}", GalleryHandler).Methods("GET")
 	http.ListenAndServe(Configs.Port, r)
 }
