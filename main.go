@@ -8,6 +8,10 @@ import (
 	"encoding/json"
 	"os"
 	"log"
+	"encoding/base64"
+	"strings"
+	"image"
+	_ "image/jpeg"
 )
 
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
@@ -29,7 +33,6 @@ func GalleryHandler(w http.ResponseWriter, request *http.Request) {
 
 func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 	r.ParseForm()
-	// log.Println(r.Form)
 	var src SourceImage
 
 	for key, _ := range r.Form {
@@ -39,17 +42,35 @@ func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 		}
 	}
 
+	b64data := src.Source[strings.IndexByte(src.Source, ',')+1:]
+
+	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(b64data))
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	log.Println("Before bound")
+	bound := img.Bounds()
+	log.Println(bound)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	jsonEndpoint(w, src)
 }
 
 func itemNotFoundEndpoint(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(http.StatusNotFound)
 }
 
 func jsonEndpoint(w http.ResponseWriter, result interface{}) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "    ")
