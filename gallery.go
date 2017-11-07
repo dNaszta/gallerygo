@@ -26,6 +26,11 @@ type ImageProperty struct {
 	Height uint16	`json:"height"`
 }
 
+type SourceImage struct {
+	Descriptions map[string]string	`json:"descriptions"`
+	Source string					`json:"source"`
+}
+
 func (g *Gallery) toJSON() []byte {
 	out, err := json.Marshal(g)
 
@@ -63,7 +68,7 @@ func FindGalleryIds() *[]GalleryId {
 	var results []GalleryId
 	err := GalleryCollection.
 		Find(bson.M{}).
-		Select(bson.M{"_id" : 0, "gallery_id" : 1}).
+		Select(bson.M{"_id" : 0, GalleryKey : 1}).
 		All(&results)
 	if err != nil {
 		panic(err)

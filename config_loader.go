@@ -14,6 +14,7 @@ var Configs configs
 
 type configs struct {
 	Port string
+	Log string
 	Sizes []sizeConfig
 	MongoDB mongoSettings
 }

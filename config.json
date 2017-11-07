@@ -1,4 +1,5 @@
 {
+    "Log" : "./gallerygo.log",
     "Port" : ":8080",
     "MongoDB" : {
         "ConnectionString" : "localhost",

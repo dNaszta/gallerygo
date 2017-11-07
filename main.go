@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"gopkg.in/mgo.v2"
 	"encoding/json"
+	"os"
+	"log"
 )
 
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
@@ -23,6 +25,21 @@ func GalleryHandler(w http.ResponseWriter, request *http.Request) {
 	} else {
 		jsonEndpoint(w, result)
 	}
+}
+
+func ImageHandler(w http.ResponseWriter, r *http.Request)  {
+	r.ParseForm()
+	// log.Println(r.Form)
+	var src SourceImage
+
+	for key, _ := range r.Form {
+		err := json.Unmarshal([]byte(key), &src)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	jsonEndpoint(w, src)
 }
 
 func itemNotFoundEndpoint(w http.ResponseWriter) {
@@ -50,6 +67,14 @@ func init() {
 var GalleryCollection *mgo.Collection
 
 func main() {
+	logfile, err := os.OpenFile(Configs.Log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer logfile.Close()
+	log.SetOutput(logfile)
+
 	session := GetSession()
 	defer session.Close()
 	GalleryCollection = GetGalleryCollection(session)
@@ -63,6 +88,9 @@ func main() {
 
 	r.HandleFunc("/gallery/{galleryId}", GalleryHandler).
 		Methods("GET")
+
+	r.HandleFunc("/gallery/{galleryId}/image", ImageHandler).
+		Methods("POST")
 
 	http.ListenAndServe(Configs.Port, r)
 }
