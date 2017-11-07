@@ -49,9 +49,11 @@ func (g *Gallery) Insert() {
 
 func FindGalleryByGalleryId(galleryId string) *Gallery {
 	gallery := Gallery{}
-	err := GalleryCollection.Find(bson.M{GalleryKey : galleryId}).One(&gallery)
+	err := GalleryCollection.
+		Find(bson.M{GalleryKey : galleryId}).
+		One(&gallery)
 	if err != nil {
-		panic(err)
+		return nil
 	}
 
 	return &gallery
@@ -59,7 +61,10 @@ func FindGalleryByGalleryId(galleryId string) *Gallery {
 
 func FindGalleryIds() *[]GalleryId {
 	var results []GalleryId
-	err := GalleryCollection.Find(bson.M{}).Select(bson.M{"_id" : 0, "gallery_id" : 1}).All(&results)
+	err := GalleryCollection.
+		Find(bson.M{}).
+		Select(bson.M{"_id" : 0, "gallery_id" : 1}).
+		All(&results)
 	if err != nil {
 		panic(err)
 	}

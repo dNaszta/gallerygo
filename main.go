@@ -18,8 +18,16 @@ func GalleryHandler(w http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	galleryId := vars["galleryId"]
 	result := FindGalleryByGalleryId(galleryId)
+	if result == nil {
+		itemNotFoundEndpoint(w)
+	} else {
+		jsonEndpoint(w, result)
+	}
+}
 
-	jsonEndpoint(w, result)
+func itemNotFoundEndpoint(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
 }
 
 func jsonEndpoint(w http.ResponseWriter, result interface{}) {
@@ -49,7 +57,12 @@ func main() {
 	// RunMongo()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", HomeHandler).Methods("GET")
-	r.HandleFunc("/gallery/{galleryId}", GalleryHandler).Methods("GET")
+
+	r.HandleFunc("/", HomeHandler).
+		Methods("GET")
+
+	r.HandleFunc("/gallery/{galleryId}", GalleryHandler).
+		Methods("GET")
+
 	http.ListenAndServe(Configs.Port, r)
 }
