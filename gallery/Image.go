@@ -5,3 +5,15 @@ type Image struct {
 	Original ImageProperty			`json:"original"`
 	Instances []ImageProperty		`json:"instances"`
 }
+
+func CreateImageByPropertyAndSource(property *ImageProperty, source SourceImage) (Image){
+	image := Image{
+		Descriptions: source.Descriptions,
+		Original: ImageProperty{
+			Src: property.Src,
+			Width: property.Width,
+			Height: property.Height,
+		},
+	}
+	return image
+}

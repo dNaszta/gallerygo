@@ -36,6 +36,21 @@ func (g *Gallery) Insert(collection *mgo.Collection) {
 	}
 }
 
+func (g *Gallery) Update(collection *mgo.Collection) {
+	err := collection.Update(bson.M{"gallery_id": g.GalleryId}, g)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (g *Gallery) AddNewOriginalImage(image Image) {
+	n := len(g.Images)
+	arr := make([]Image, n + 1)
+	copy(arr, g.Images)
+	arr[n] = image
+	g.Images = arr
+}
+
 func FindGalleryByGalleryId(collection *mgo.Collection, galleryId string) *Gallery {
 	gallery := Gallery{}
 	err := collection.

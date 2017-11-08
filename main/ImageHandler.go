@@ -6,9 +6,22 @@ import (
 	"strings"
 	"net/http"
 	"gallerygo/rest"
+	"gopkg.in/gorilla/mux.v1"
 )
 
 func ImageHandler(w http.ResponseWriter, r *http.Request)  {
+	vars := mux.Vars(r)
+	galleryId := vars["galleryId"]
+	galleryItem := gallery.FindGalleryByGalleryId(GalleryCollection, galleryId)
+
+	if galleryItem == nil {
+		restError := &rest.Error{
+			Message: "Invalid gallery_id",
+		}
+		rest.ErrorEndpoint(w, restError)
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
 	var src gallery.SourceImage
@@ -25,6 +38,10 @@ func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 	if err != nil {
 		panic(err)
 	}
+
+	image := gallery.CreateImageByPropertyAndSource(imageProperty, src)
+	galleryItem.AddNewOriginalImage(image)
+	galleryItem.Update(GalleryCollection)
 
 	rest.JsonEndpoint(w, imageProperty)
 }

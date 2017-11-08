@@ -20,10 +20,11 @@ func GalleryCreateHandler(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 
-	gallery := &gallery.Gallery{
+	galleryItem := &gallery.Gallery{
 		GalleryId: galleryId,
 	}
+	galleryItem.Insert(GalleryCollection)
 
-	gallery.Insert(GalleryCollection)
-	rest.JsonEndpoint(w, gallery)
+	result = gallery.FindGalleryByGalleryId(GalleryCollection, galleryId)
+	rest.JsonEndpoint(w, result)
 }
