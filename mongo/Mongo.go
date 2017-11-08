@@ -43,7 +43,7 @@ func CheckAndCreateGalleryIndexes(collection *mgo.Collection) {
 	isGalleryIdIndexed := false
 	for _, index := range indexes {
 		fmt.Println(index.Name)
-		if index.Name == "gallery_id" {
+		if index.Name == GalleryKey {
 			isGalleryIdIndexed = true
 		}
 	}

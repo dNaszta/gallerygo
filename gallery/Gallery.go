@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
+	"gallerygo/mongo"
 )
 
 const JPGExtension = ".jpg"
@@ -14,7 +15,7 @@ type Gallery struct {
 	Images []Image		`json:"images"`
 }
 
-func (g *Gallery) toJSON() []byte {
+func (g *Gallery) ToJSON() []byte {
 	out, err := json.Marshal(g)
 
 	if err != nil {
@@ -23,8 +24,8 @@ func (g *Gallery) toJSON() []byte {
 	return out
 }
 
-func (g *Gallery) toString() string {
-	return string(g.toJSON())
+func (g *Gallery) ToString() string {
+	return string(g.ToJSON())
 }
 
 func (g *Gallery) Insert(collection *mgo.Collection) {
@@ -38,7 +39,7 @@ func (g *Gallery) Insert(collection *mgo.Collection) {
 func FindGalleryByGalleryId(collection *mgo.Collection, galleryId string) *Gallery {
 	gallery := Gallery{}
 	err := collection.
-		Find(bson.M{"gallery_id" : galleryId}).
+		Find(bson.M{mongo.GalleryKey : galleryId}).
 		One(&gallery)
 	if err != nil {
 		return nil
