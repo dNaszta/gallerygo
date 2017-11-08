@@ -41,8 +41,9 @@ func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 	if err != nil {
 		panic(err)
 	}
-	//b64data := src.Source[strings.IndexByte(src.Source, ',')+1:]
-	//base64toJpg(b64data)
+
+	b64data := src.Source[strings.IndexByte(src.Source, ',')+1:]
+	base64toJpg(b64data)
 	jsonEndpoint(w, src)
 }
 
