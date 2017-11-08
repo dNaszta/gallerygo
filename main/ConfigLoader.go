@@ -1,10 +1,10 @@
 package main
 
 import (
-	"os"
-	"fmt"
-	"io/ioutil"
 	"encoding/json"
+	"io/ioutil"
+	"fmt"
+	"os"
 )
 
 const ConfigFileName = "./config.json"

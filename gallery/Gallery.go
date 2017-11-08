@@ -1,37 +1,17 @@
-package main
+package gallery
 
 import (
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2"
 )
 
 const JPGExtension = ".jpg"
 const Base64JpgStart = "data:image/jpg;base64,"
 
-type GalleryId struct {
-	GalleryId string	`bson:"gallery_id" json:"gallery_id"`
-}
-
 type Gallery struct {
 	GalleryId string	`bson:"gallery_id" json:"gallery_id"`
 	Images []Image		`json:"images"`
-}
-
-type Image struct {
-	Descriptions map[string]string	`json:"descriptions"`
-	Original ImageProperty			`json:"original"`
-	Instances []ImageProperty		`json:"instances"`
-}
-
-type ImageProperty struct {
-	Src string		`json:"src"`
-	Width uint16	`json:"width"`
-	Height uint16	`json:"height"`
-}
-
-type SourceImage struct {
-	Descriptions map[string]string	`json:"descriptions"`
-	Source string					`json:"source"`
 }
 
 func (g *Gallery) toJSON() []byte {
@@ -47,37 +27,24 @@ func (g *Gallery) toString() string {
 	return string(g.toJSON())
 }
 
-func (g *Gallery) Insert() {
-	err := GalleryCollection.Insert(g)
+func (g *Gallery) Insert(collection *mgo.Collection) {
+	err := collection.Insert(g)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func FindGalleryByGalleryId(galleryId string) *Gallery {
+func FindGalleryByGalleryId(collection *mgo.Collection, galleryId string) *Gallery {
 	gallery := Gallery{}
-	err := GalleryCollection.
-		Find(bson.M{GalleryKey : galleryId}).
+	err := collection.
+		Find(bson.M{"gallery_id" : galleryId}).
 		One(&gallery)
 	if err != nil {
 		return nil
 	}
 
 	return &gallery
-}
-
-func FindGalleryIds() *[]GalleryId {
-	var results []GalleryId
-	err := GalleryCollection.
-		Find(bson.M{}).
-		Select(bson.M{"_id" : 0, GalleryKey : 1}).
-		All(&results)
-	if err != nil {
-		panic(err)
-	}
-
-	return &results
 }
 
 var TestGallery = Gallery {
