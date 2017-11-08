@@ -5,6 +5,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+const JPGExtension = ".jpg"
+const Base64JpgStart = "data:image/jpg;base64,"
+
 type GalleryId struct {
 	GalleryId string	`bson:"gallery_id" json:"gallery_id"`
 }
@@ -21,7 +24,7 @@ type Image struct {
 }
 
 type ImageProperty struct {
-	Src string		`json:"gallery_id"`
+	Src string		`json:"src"`
 	Width uint16	`json:"width"`
 	Height uint16	`json:"height"`
 }

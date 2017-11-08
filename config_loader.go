@@ -15,6 +15,8 @@ var Configs configs
 type configs struct {
 	Port string
 	Log string
+	ImageFolder string
+	ImageHost string
 	Sizes []sizeConfig
 	MongoDB mongoSettings
 }

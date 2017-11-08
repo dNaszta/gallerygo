@@ -11,9 +11,9 @@ import (
 	"encoding/base64"
 	"strings"
 	"image"
-	_ "image/jpeg"
 	"bufio"
 	"image/jpeg"
+	"time"
 )
 
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
@@ -43,11 +43,21 @@ func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 	}
 
 	b64data := src.Source[strings.IndexByte(src.Source, ',')+1:]
-	base64toJpg(b64data)
-	jsonEndpoint(w, src)
+	imageProperty, err := base64toJpg(b64data)
+	if err != nil {
+		panic(err)
+	}
+
+	jsonEndpoint(w, imageProperty)
 }
 
-func base64toJpg(data string) {
+func getTimeString() string {
+	t := time.Now().UnixNano()
+	return fmt.Sprintf("%v", t)
+}
+
+func base64toJpg(data string) (*ImageProperty, error) {
+	imageProperty := &ImageProperty{}
 	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(data))
 	m, formatString, err := image.Decode(reader)
 	if err != nil {
@@ -57,20 +67,22 @@ func base64toJpg(data string) {
 	log.Println("base64toJpg", bounds, formatString)
 
 	//Encode from image format to writer
-	pngFilename := "./images/upload/test.jpg"
-	f, err := os.OpenFile(pngFilename, os.O_WRONLY|os.O_CREATE, 0777)
+	filename := getTimeString()
+	jpgFilename := Configs.ImageFolder + "/" + filename + JPGExtension
+	f, err := os.OpenFile(jpgFilename, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
-		log.Fatal(err)
-		return
+		return imageProperty, err
 	}
 
 	err = jpeg.Encode(f, m, &jpeg.Options{Quality: 75})
 	if err != nil {
-		log.Fatal(err)
-		return
+		return imageProperty, err
 	}
-	log.Println("Jpg file", pngFilename, "created")
 
+	imageProperty.Src = Configs.ImageHost + "/" + filename + JPGExtension
+	imageProperty.Width = uint16(bounds.Max.X)
+	imageProperty.Height = uint16(bounds.Max.Y)
+	return imageProperty, err
 }
 
 func TestImageHandler(w http.ResponseWriter, _ *http.Request)  {
@@ -85,18 +97,11 @@ func TestImageHandler(w http.ResponseWriter, _ *http.Request)  {
 	size := fInfo.Size()
 	buf := make([]byte, size)
 
-	// read file content into buffer
 	fReader := bufio.NewReader(reader)
 	fReader.Read(buf)
 
-	// if you create a new image instead of loading from file, encode the image to buffer instead with jpg.Encode()
-	// jpg.Encode(&buf, image)
-
-	// convert the buffer bytes to base64 string - use buf.Bytes() for new image
 	imgBase64Str := base64.StdEncoding.EncodeToString(buf)
-
-	// Embed into an html without JPG file
-	img2str := "data:image/jpg;base64," + imgBase64Str // + "\"
+	img2str := Base64JpgStart + imgBase64Str
 
 	w.Write([]byte(fmt.Sprintf(img2str)))
 }
@@ -126,7 +131,10 @@ func init() {
 var GalleryCollection *mgo.Collection
 
 func main() {
-	logfile, err := os.OpenFile(Configs.Log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	logfile, err := os.OpenFile(
+		Configs.Log,
+		os.O_WRONLY|os.O_CREATE|os.O_APPEND,
+		0644)
 	if err != nil {
 		log.Fatal(err)
 	}
