@@ -12,6 +12,7 @@ import (
 	"strings"
 	"image"
 	_ "image/jpeg"
+	"bufio"
 )
 
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
@@ -63,6 +64,35 @@ func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 	jsonEndpoint(w, src)
 }
 
+func TestImageHandler(w http.ResponseWriter, _ *http.Request)  {
+	reader, err := os.Open("./images/1280x1024.jpg")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer reader.Close()
+
+	fInfo, _ := reader.Stat()
+	size := fInfo.Size()
+	buf := make([]byte, size)
+
+	// read file content into buffer
+	fReader := bufio.NewReader(reader)
+	fReader.Read(buf)
+
+	// if you create a new image instead of loading from file, encode the image to buffer instead with png.Encode()
+
+	// png.Encode(&buf, image)
+
+	// convert the buffer bytes to base64 string - use buf.Bytes() for new image
+	imgBase64Str := base64.StdEncoding.EncodeToString(buf)
+
+	// Embed into an html without JPG file
+	img2str := "data:image/jpg;base64," + imgBase64Str // + "\"
+
+	w.Write([]byte(fmt.Sprintf(img2str)))
+}
+
 func itemNotFoundEndpoint(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNotFound)
@@ -112,6 +142,8 @@ func main() {
 
 	r.HandleFunc("/gallery/{galleryId}/image", ImageHandler).
 		Methods("POST")
+
+	r.HandleFunc("/test_image", TestImageHandler)
 
 	http.ListenAndServe(Configs.Port, r)
 }

@@ -42,14 +42,14 @@ func CheckAndCreateGalleryIndexes() {
 
 	isGalleryIdIndexed := false
 	for _, index := range indexes {
-		if index.Name == GalleryKey {
+		fmt.Println(index.Name)
+		if index.Name == "gallery_id" {
 			isGalleryIdIndexed = true
 		}
-		fmt.Println(index.Name)
 	}
 
 	if isGalleryIdIndexed == false {
-		setGalleryKeyIndex()
+		// setGalleryKeyIndex()
 	}
 }
 
