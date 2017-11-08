@@ -48,7 +48,11 @@ func main() {
 	r.HandleFunc("/gallery/{galleryId}/image", ImageHandler).
 		Methods("POST")
 
-	r.HandleFunc("/test_image", TestImageHandler)
+	r.HandleFunc("/test_image", TestImageHandler).
+		Methods("GET")
+
+	r.HandleFunc("/gallery/{galleryId}/create", GalleryCreateHandler).
+		Methods("POST")
 
 	http.ListenAndServe(Configs.Port, r)
 }
