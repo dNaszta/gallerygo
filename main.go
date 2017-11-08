@@ -13,6 +13,7 @@ import (
 	"image"
 	_ "image/jpeg"
 	"bufio"
+	"image/jpeg"
 )
 
 func HomeHandler(w http.ResponseWriter, _ *http.Request) {
@@ -33,35 +34,42 @@ func GalleryHandler(w http.ResponseWriter, request *http.Request) {
 }
 
 func ImageHandler(w http.ResponseWriter, r *http.Request)  {
-	r.ParseForm()
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
 	var src SourceImage
-
-	for key, _ := range r.Form {
-		err := json.Unmarshal([]byte(key), &src)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	b64data := src.Source[strings.IndexByte(src.Source, ',')+1:]
-
-	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(b64data))
-	img, _, err := image.Decode(reader)
+	err := decoder.Decode(&src)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		panic(err)
 	}
-
-	log.Println("Before bound")
-	bound := img.Bounds()
-	log.Println(bound)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
+	//b64data := src.Source[strings.IndexByte(src.Source, ',')+1:]
+	//base64toJpg(b64data)
 	jsonEndpoint(w, src)
+}
+
+func base64toJpg(data string) {
+	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(data))
+	m, formatString, err := image.Decode(reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bounds := m.Bounds()
+	log.Println("base64toJpg", bounds, formatString)
+
+	//Encode from image format to writer
+	pngFilename := "./images/upload/test.jpg"
+	f, err := os.OpenFile(pngFilename, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	err = jpeg.Encode(f, m, &jpeg.Options{Quality: 75})
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	log.Println("Jpg file", pngFilename, "created")
+
 }
 
 func TestImageHandler(w http.ResponseWriter, _ *http.Request)  {
