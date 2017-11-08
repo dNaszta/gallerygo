@@ -80,9 +80,8 @@ func TestImageHandler(w http.ResponseWriter, _ *http.Request)  {
 	fReader := bufio.NewReader(reader)
 	fReader.Read(buf)
 
-	// if you create a new image instead of loading from file, encode the image to buffer instead with png.Encode()
-
-	// png.Encode(&buf, image)
+	// if you create a new image instead of loading from file, encode the image to buffer instead with jpg.Encode()
+	// jpg.Encode(&buf, image)
 
 	// convert the buffer bytes to base64 string - use buf.Bytes() for new image
 	imgBase64Str := base64.StdEncoding.EncodeToString(buf)

@@ -48,6 +48,8 @@ func CheckAndCreateGalleryIndexes() {
 		}
 	}
 
+	fmt.Println(isGalleryIdIndexed)
+
 	if isGalleryIdIndexed == false {
 		// setGalleryKeyIndex()
 	}
