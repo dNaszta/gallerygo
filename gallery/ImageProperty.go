@@ -9,6 +9,7 @@ import (
 	"image/jpeg"
 	"time"
 	"fmt"
+	"gallerygo/config"
 )
 
 type ImageProperty struct {
@@ -17,7 +18,7 @@ type ImageProperty struct {
 	Height uint16	`json:"height"`
 }
 
-func Base64toJpg(data, folder, host string) (*ImageProperty, error) {
+func Base64toJpg(data string) (*ImageProperty, error) {
 	imageProperty := &ImageProperty{}
 	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(data))
 	m, formatString, err := image.Decode(reader)
@@ -28,8 +29,8 @@ func Base64toJpg(data, folder, host string) (*ImageProperty, error) {
 	log.Println("base64toJpg", bounds, formatString)
 
 	//Encode from image format to writer
-	filename := getTimeString()
-	jpgFilename := folder + "/" + filename + JPGExtension
+	filename := GetTimeString()
+	jpgFilename := config.Folder + filename + JPGExtension
 	f, err := os.OpenFile(jpgFilename, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		return imageProperty, err
@@ -40,13 +41,13 @@ func Base64toJpg(data, folder, host string) (*ImageProperty, error) {
 		return imageProperty, err
 	}
 
-	imageProperty.Src = folder + "/" + filename + JPGExtension
+	imageProperty.Src = jpgFilename
 	imageProperty.Width = uint16(bounds.Max.X)
 	imageProperty.Height = uint16(bounds.Max.Y)
 	return imageProperty, err
 }
 
-func getTimeString() string {
+func GetTimeString() string {
 	t := time.Now().UnixNano()
 	return fmt.Sprintf("%v", t)
 }

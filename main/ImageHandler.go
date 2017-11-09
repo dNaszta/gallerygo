@@ -31,10 +31,7 @@ func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 	}
 
 	b64data := src.Source[strings.IndexByte(src.Source, ',')+1:]
-	imageProperty, err := gallery.Base64toJpg(
-		b64data,
-		Configs.ImageFolder,
-		Configs.ImageHost)
+	imageProperty, err := gallery.Base64toJpg(b64data)
 	if err != nil {
 		panic(err)
 	}

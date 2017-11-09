@@ -1,8 +1,6 @@
 {
     "Log" : "./gallerygo.log",
     "Port" : ":8080",
-    "ImageFolder" : "./images/upload",
-    "ImageHost" : "http://localhost:8080/images/upload",
     "MongoDB" : {
         "ConnectionString" : "localhost",
         "Database" : "test",

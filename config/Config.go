@@ -10,8 +10,6 @@ import (
 type Configs struct {
 	Port string
 	Log string
-	ImageFolder string
-	ImageHost string
 	Sizes []SizeConfig
 	MongoDB mongoSettings
 }
