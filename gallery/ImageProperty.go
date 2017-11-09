@@ -40,7 +40,7 @@ func Base64toJpg(data, folder, host string) (*ImageProperty, error) {
 		return imageProperty, err
 	}
 
-	imageProperty.Src = host + "/" + filename + JPGExtension
+	imageProperty.Src = folder + "/" + filename + JPGExtension
 	imageProperty.Width = uint16(bounds.Max.X)
 	imageProperty.Height = uint16(bounds.Max.Y)
 	return imageProperty, err

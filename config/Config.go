@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -7,17 +7,12 @@ import (
 	"os"
 )
 
-const ConfigFileName = "./config.json"
-const DefaultPort = ":8080"
-
-var Configs configs
-
-type configs struct {
+type Configs struct {
 	Port string
 	Log string
 	ImageFolder string
 	ImageHost string
-	Sizes []sizeConfig
+	Sizes []SizeConfig
 	MongoDB mongoSettings
 }
 
@@ -27,12 +22,13 @@ type mongoSettings struct {
 	GalleryCollection string
 }
 
-type sizeConfig struct {
+type SizeConfig struct {
+	Suffix string
 	Width uint16
 	Height uint16
 }
 
-func (c *configs) toJSON() []byte {
+func (c *Configs) ToJSON() []byte {
 	out, err := json.Marshal(c)
 	if err != nil {
 		panic (err)
@@ -40,17 +36,17 @@ func (c *configs) toJSON() []byte {
 	return out
 }
 
-func (c *configs) toString() string {
-	return string(c.toJSON())
+func (c *Configs) ToString() string {
+	return string(c.ToJSON())
 }
 
-func Load()  {
+func Load(Configs *Configs)  {
 	file, err := ioutil.ReadFile(ConfigFileName)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	json.Unmarshal(file, &Configs)
+	json.Unmarshal(file, Configs)
 
 	if len(Configs.Sizes) < 1 {
 		fmt.Printf("Error: No image sizes config")

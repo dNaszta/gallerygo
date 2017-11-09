@@ -10,10 +10,12 @@
     },
     "Sizes": [
         {
+            "Suffix": "s",
             "Width": 640,
             "Height": 480
         },
         {
+            "Suffix": "m",
             "Width": 1024,
             "Height": 768
         }

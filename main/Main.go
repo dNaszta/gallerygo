@@ -8,14 +8,17 @@ import (
 	"os"
 	"log"
 	"gallerygo/mongo"
+	"gallerygo/config"
 )
 
-func init() {
-	Load()
-	fmt.Println("Configs:", Configs.toString())
-}
-
+var Configs config.Configs
 var GalleryCollection *mgo.Collection
+
+func init() {
+
+	config.Load(&Configs)
+	fmt.Println("Configs:", Configs.ToString())
+}
 
 func main() {
 	logfile, err := os.OpenFile(
