@@ -40,7 +40,7 @@ func ImageHandler(w http.ResponseWriter, r *http.Request)  {
 	}
 
 	image := gallery.CreateImageByPropertyAndSource(imageProperty, src)
-	// image.CreateInstances(Configs.Sizes)
+	image.CreateInstances(Configs.Sizes)
 	galleryItem.AddNewOriginalImage(image)
 	galleryItem.Update(GalleryCollection)
 

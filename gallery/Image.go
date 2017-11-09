@@ -2,6 +2,7 @@ package gallery
 
 import (
 	"gallerygo/config"
+	"log"
 )
 
 type Image struct {
@@ -11,7 +12,19 @@ type Image struct {
 }
 
 func (i *Image) CreateInstances(sizes []config.SizeConfig) {
+	log.Println("Sizes:", len(sizes))
+	for _, size := range sizes {
+		instance := resizeToInstance(size, i.Original.Src)
+		i.Instances = append(i.Instances, instance)
+	}
+}
 
+func resizeToInstance(size config.SizeConfig, path string) ImageProperty {
+	return ImageProperty{
+		Src: path,
+		Width: size.Width,
+		Height: size.Height,
+	}
 }
 
 func CreateImageByPropertyAndSource(property *ImageProperty, source SourceImage) (Image){
