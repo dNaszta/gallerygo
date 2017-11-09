@@ -2,8 +2,10 @@ package gallery
 
 import (
 	"gallerygo/config"
-	"log"
+	"sync"
 )
+
+var wg sync.WaitGroup
 
 type Image struct {
 	Descriptions map[string]string	`json:"descriptions"`
@@ -12,19 +14,32 @@ type Image struct {
 }
 
 func (i *Image) CreateInstances(sizes []config.SizeConfig) {
-	log.Println("Sizes:", len(sizes))
+	sizeLen := len(sizes)
+	wg.Add(sizeLen)
+
+	instanceChan := make(chan ImageProperty, sizeLen)
+
 	for _, size := range sizes {
-		instance := resizeToInstance(size, i.Original.Src)
-		i.Instances = append(i.Instances, instance)
+		go resizeToInstance(size, i.Original.Src, instanceChan)
 	}
+
+	wg.Wait()
+
+	for pr := 0; pr < sizeLen; pr++ {
+		inst := <-instanceChan
+		i.Instances = append(i.Instances, inst)
+	}
+	close(instanceChan)
 }
 
-func resizeToInstance(size config.SizeConfig, path string) ImageProperty {
-	return ImageProperty{
+func resizeToInstance(size config.SizeConfig, path string, instanceCh chan ImageProperty) {
+	defer wg.Done()
+	inst := ImageProperty{
 		Src: path,
 		Width: size.Width,
 		Height: size.Height,
 	}
+	instanceCh<-inst
 }
 
 func CreateImageByPropertyAndSource(property *ImageProperty, source SourceImage) (Image){
