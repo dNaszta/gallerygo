@@ -1,0 +1,16 @@
+{
+    "Port" : ":8080",
+    "Log" : "test",
+    "Sizes": [
+        {
+            "Suffix": "a",
+            "Width": 10,
+            "Height": 20
+        }
+    ],
+    "MongoDB" : {
+        "ConnectionString" : "localhost",
+        "Database" : "database",
+        "GalleryCollection" : "collection"
+    }
+}

@@ -15,8 +15,7 @@ var Configs config.Configs
 var GalleryCollection *mgo.Collection
 
 func init() {
-
-	config.Load(&Configs)
+	config.Load(config.ConfigFileName, &Configs)
 	fmt.Println("Configs:", Configs.ToString())
 }
 

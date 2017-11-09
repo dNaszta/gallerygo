@@ -38,20 +38,20 @@ func (c *Configs) ToString() string {
 	return string(c.ToJSON())
 }
 
-func Load(Configs *Configs)  {
-	file, err := ioutil.ReadFile(ConfigFileName)
+func Load(path string, configs *Configs)  {
+	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	json.Unmarshal(file, Configs)
+	json.Unmarshal(file, configs)
 
-	if len(Configs.Sizes) < 1 {
+	if len(configs.Sizes) < 1 {
 		fmt.Printf("Error: No image sizes config")
 		os.Exit(1)
 	}
 
-	if Configs.Port == "" {
-		Configs.Port = DefaultPort
+	if configs.Port == "" {
+		configs.Port = DefaultPort
 	}
 }
